@@ -10,6 +10,11 @@ template <typename T, std::size_t Alignment>
 struct AlignedAllocator {
     using value_type = T;
 
+    template <typename U>
+    struct rebind {
+        using other = AlignedAllocator<U, Alignment>;
+    };
+
     AlignedAllocator() noexcept = default;
 
     template <typename U>
@@ -35,7 +40,6 @@ struct AlignedAllocator {
 // Convenience type definition for 32-byte aligned float vectors
 using AlignedVectorFloat = std::vector<float, AlignedAllocator<float, 32>>;
 
-// Matrix Multiplication using 32-Byte Aligned AVX2 Loads & Stores
 void multiply_avx2_aligned(const AlignedVectorFloat& A, 
                            const AlignedVectorFloat& B, 
                            AlignedVectorFloat& C, 
@@ -80,6 +84,7 @@ void multiply_avx2_aligned(const AlignedVectorFloat& A,
         }
     }
 }
+
 
 int main() {
     // Note: N must be a multiple of 8 (or padded) so that inner row offsets remain 32-byte aligned
